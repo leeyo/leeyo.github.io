@@ -1,0 +1,66 @@
+# 地址
+baseURL = "https://leeyo.github.io/"
+# 语言编码(中文: zh-CN)
+languageCode = "zh-CN"
+# 默认的内容语言
+defaultContentLanguage =      "zh-CN"
+title = "Skynet's Blog"
+theme = "maupassant"
+
+builddrafts = false
+uglyurls = true
+
+contentdir = "content"
+layoutdir = "layouts"
+publishdir = "public"
+
+## 保持分类的原始名字（false会做转小写处理）
+#preserveTaxonomyNames = true
+
+## 是否禁止URL Path转小写
+#disablePathToLower = false
+
+[author]
+  name = "Skynet"
+  github = ""
+
+[params]
+  author = "Skynet"
+  subtitle = "专注于架构、项目管理、音视频直播整体解决方案"
+  keywords = "架构、高并发、php、golang、go、go教程、音视频、直播、项目管理、移动互联网"
+  description = "专注于IT互联网，包括但不限于架构、项目管理、音视频直播"
+  busuanzi = true
+
+[menu]
+  [[menu.main]]
+    identifier = "archives"
+    name = "归档"
+    url = "/archives/"
+    weight = 3
+  [[menu.main]]
+    identifier = "about"
+    name = "关于"
+    url = "/about/"
+    weight = 4
+
+[permalinks]
+  post = "/:year/:month/:filename"
+
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+  series = "series"
+
+# 分页
+paginate =       10
+paginatePath =  "page"
+
+# 创建robots.txt，建议设置为true
+enableRobotsTXT =             false
+
+
+[[params.links]]
+  title = "欢拓"
+  name = "欢拓"
+  url = "https://www.talk-fun.com/"
