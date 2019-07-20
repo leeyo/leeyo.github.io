@@ -27,25 +27,25 @@
   </url>
   
   <url>
-    <loc>https://leeyo.github.io/tags/golang/</loc>
-    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://leeyo.github.io/categories/golang/</loc>
     <lastmod>2019-07-20T14:34:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://leeyo.github.io/tags/hugo/</loc>
+    <loc>https://leeyo.github.io/tags/golang/</loc>
     <lastmod>2019-07-20T14:34:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://leeyo.github.io/categories/hugo/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/tags/hugo/</loc>
     <lastmod>2019-07-20T14:34:00+08:00</lastmod>
     <priority>0</priority>
   </url>
