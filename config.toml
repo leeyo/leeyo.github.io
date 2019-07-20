@@ -12,7 +12,7 @@ uglyurls = true
 
 contentdir = "content"
 layoutdir = "layouts"
-publishdir = "docs"
+publishdir = "public"
 
 ## 保持分类的原始名字（false会做转小写处理）
 #preserveTaxonomyNames = true
@@ -58,9 +58,3 @@ paginatePath =  "page"
 
 # 创建robots.txt，建议设置为true
 enableRobotsTXT =             false
-
-
-[[params.links]]
-  title = "欢拓"
-  name = "欢拓"
-  url = "https://www.talk-fun.com/"
