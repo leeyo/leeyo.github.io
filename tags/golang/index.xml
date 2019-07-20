@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>golang on Skynet&#39;s Blog</title>
+    <link>https://leeyo.github.io/tags/golang/</link>
+    <description>Recent content in golang on Skynet&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 20 Jul 2019 14:34:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://leeyo.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>开始使用hugo</title>
+      <link>https://leeyo.github.io/2019/07/hugo-start/</link>
+      <pubDate>Sat, 20 Jul 2019 14:34:00 +0800</pubDate>
+      
+      <guid>https://leeyo.github.io/2019/07/hugo-start/</guid>
+      <description>工作了这么长时间，一直都没有写blog的习惯，基本都是将笔记记录到了有道云笔记和onenote中。作为golang的新用户，最近沉迷于golang无法自拔，golang在并发编程的代码书写效率极高。 并且前段时间将公司的缓存系统，统一从redis迁移到了codis，非常方便进行运维、扩容、监控。 于是看了一下codis的源代码，codis的架构设计还是非常完善的，因此想写文章记录一下源码阅读的过程，从而发现了hugo。
+什么是hugo  Hugo is a fast and modern static site generator written in Go, and designed to make website creation fun again.
+Hugo 是一个Go写的静态网站生成工具，速度快，扩展性强。
+ 为什么选择hugo * 快！世界上最快的静态网站生成工具！5秒生成6000个页面！ * 超详细的文档，虽然是英文的 * 活跃的社区 * 更加自由的内容组织方式 * 丰富的主题，目前主题数量已经超过 Hexo  更多介绍请查看官网，https://gohugo.io/
+hugo的安装 mac 平台 mac 下面提供了homebrew的安装方式
+brew install hugo  Windows 平台 # 前往 https://github.com/gohugoio/hugo/releases # 下载 hugo_X.XX_Windows-64bit.zip # 解压得到 hugo.exe # 将 hugo.exe 所在目录添加至系统环境变量 # 安装完成！  Debian 和 Ubuntu 平台 sudo apt-get install hugo  验证安装是否成功</description>
+    </item>
+    
+  </channel>
+</rss>

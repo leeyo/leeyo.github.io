@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://leeyo.github.io/categories/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/post/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/tags/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/tags/golang/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/categories/golang/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/tags/hugo/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/categories/hugo/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/2019/07/hugo-start/</loc>
+    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/10/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/false/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/page/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/series/</loc>
+    <priority>0</priority>
+  </url>
+  
+</urlset>
