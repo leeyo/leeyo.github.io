@@ -12,7 +12,7 @@ uglyurls = true
 
 contentdir = "content"
 layoutdir = "layouts"
-publishdir = "public"
+publishdir = "docs"
 
 ## 保持分类的原始名字（false会做转小写处理）
 #preserveTaxonomyNames = true
