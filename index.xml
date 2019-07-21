@@ -25,5 +25,23 @@ hugo的安装 mac 平台 mac 下面提供了homebrew的安装方式
 brew install hugo  Windows 平台 # 前往 https://github.com/gohugoio/hugo/releases # 下载 hugo_X.XX_Windows-64bit.zip # 解压得到 hugo.exe # 将 hugo.exe 所在目录添加至系统环境变量 # 安装完成！  Debian 和 Ubuntu 平台 sudo apt-get install hugo  验证安装是否成功</description>
     </item>
     
+    <item>
+      <title>关于作者</title>
+      <link>https://leeyo.github.io/about/</link>
+      <pubDate>Sat, 20 Jul 2019 10:34:41 +0800</pubDate>
+      
+      <guid>https://leeyo.github.io/about/</guid>
+      <description>资深架构师，php、nodejs资深开发，python、golang、rust、iOS、安卓爱好者，擅长音视频直播点播整体解决方案、高并发高可靠系统架构</description>
+    </item>
+    
+    <item>
+      <title>归档</title>
+      <link>https://leeyo.github.io/archives/</link>
+      <pubDate>Sat, 20 Jul 2019 10:33:13 +0800</pubDate>
+      
+      <guid>https://leeyo.github.io/archives/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>
