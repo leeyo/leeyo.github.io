@@ -7,10 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Skynet&#39;s Blog | 专注于架构、项目管理、音视频直播整体解决方案</title>
-    <meta property="og:title" content="Skynet&#39;s Blog | 专注于架构、项目管理、音视频直播整体解决方案">
+    <title>Skynet&#39;s Blog | 专注于架构、安全、项目管理、音视频直播整体解决方案</title>
+    <meta property="og:title" content="Skynet&#39;s Blog | 专注于架构、安全、项目管理、音视频直播整体解决方案">
     <meta property="og:type" content="website">
-    <meta name="Keywords" content="架构、高并发、php、golang、go、go教程、rust、rust教程、音视频、直播、项目管理、移动互联网">
+    <meta name="Keywords" content="架构、安全、devops、高并发、php、golang、rust、nodejs、音视频、直播、项目管理、移动互联网">
     <meta name="description" content="专注于IT互联网，包括但不限于架构、项目管理、音视频直播">
     <meta property="og:url" content="https://leeyo.github.io/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
@@ -41,7 +41,7 @@
                         </a>
                     </h1>
                 
-                <p class="description">专注于架构、项目管理、音视频直播整体解决方案</p>
+                <p class="description">专注于架构、安全、项目管理、音视频直播整体解决方案</p>
             </div>
             <div>
                 <nav id="nav-menu" class="clearfix">
@@ -64,6 +64,38 @@
 
             <div class="col-8" id="main">
                 <div class="res-cons">
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://leeyo.github.io/2019/07/codis-analyze-proxy-start/" title="Codis源码解析-proxy启动" >Codis源码解析-proxy启动</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年7月22日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://leeyo.github.io/categories/golang">golang</a></span>
+                                
+                                <span class="meta-category"><a href="https://leeyo.github.io/categories/codis">codis</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                启动Codis 启动参数说明 $ cd /opt/codis/admin # codis 自带了一个启动脚本 $ ./codis-proxy-admin.sh start # 执行后可以看到如下进程 $ ps aux|grep codis-proxy /opt/codis/admin/../bin/codis-proxy --config=/opt/codis/admin/../config/proxy.toml --dashboard=127.0.0.1:18080 --log=/srv/log/codis/codis-proxy.log --log-level=WARN --ncpu=12 --pidfile=/srv/log/codis/codis-proxy.pid  --config=/opt/codis/config/proxy.toml #用于指定proxy配置文件路径
+--dashboard=127.0.0.1:18080 #用于指定dashboard地址
+--log=/srv/log/codis/codis-proxy.log #用于指定日志路径
+--log-level=WARN #用于指定日志输出等级
+--ncpu=12 #请参考如下代码，这里要特别说明一下，如果不显式指明GOMAXPROCS的话，goroutine都是运行在同一个CPU核心上，一个goroutine得到时间片的时候，其他的goroutine都在等待。
+--pidfile=/srv/log/codis/codis-proxy.pid # 指定pid文件
+主程序的入口为cmd/proxy/main.go
+独立的goroutine，根据负载自动调配GOMAXPROCS var ncpu int if n, ok := utils.ArgumentInteger(d, &quot;--ncpu&quot;); ok { ncpu = n //显式指明使用的cpu数量 } else { ncpu = 4	//默认使用cpu数量 } //设置cpu数量 runtime.GOMAXPROCS(ncpu) var maxncpu int if n, ok := utils.……
+                            </div>
+                            <p class="readmore"><a href="https://leeyo.github.io/2019/07/codis-analyze-proxy-start/">阅读全文</a></p>
+                        </article>
                     
                         <article class="post">
                             <header>
@@ -151,6 +183,10 @@ brew install hugo  Windows 平台 # 前往 https://github.com/gohugoio/hugo/rele
 <ul class="widget-list">
     
     <li>
+        <a href="https://leeyo.github.io/2019/07/codis-analyze-proxy-start/" title="Codis源码解析-proxy启动">Codis源码解析-proxy启动</a>
+    </li>
+    
+    <li>
         <a href="https://leeyo.github.io/2019/07/hugo-start/" title="开始使用hugo">开始使用hugo</a>
     </li>
     
@@ -164,7 +200,11 @@ brew install hugo  Windows 平台 # 前往 https://github.com/gohugoio/hugo/rele
 <ul class="widget-list">
     
     <li>
-        <a href="https://leeyo.github.io/categories/golang/">golang(1)</a>
+        <a href="https://leeyo.github.io/categories/codis/">codis(1)</a>
+    </li>
+    
+    <li>
+        <a href="https://leeyo.github.io/categories/golang/">golang(2)</a>
     </li>
     
     <li>
@@ -177,6 +217,8 @@ brew install hugo  Windows 平台 # 前往 https://github.com/gohugoio/hugo/rele
     <section class="widget">
         <h3 class="widget-title">标签</h3>
 <div class="tagcloud">
+    
+    <a href="https://leeyo.github.io/tags/codis/">codis</a>
     
     <a href="https://leeyo.github.io/tags/golang/">golang</a>
     

@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.55.6" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Codis源码解析-proxy启动 | Skynet&#39;s Blog</title>
+    <meta property="og:title" content="Codis源码解析-proxy启动 - Skynet&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2019-07-22T16:19:37&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2019-07-22T16:19:37&#43;08:00">
+        
+    <meta name="Keywords" content="架构、安全、devops、高并发、php、golang、rust、nodejs、音视频、直播、项目管理、移动互联网">
+    <meta name="description" content="Codis源码解析-proxy启动">
+        
+    <meta name="author" content="Skynet">
+    <meta property="og:url" content="https://leeyo.github.io/2019/07/codis-analyze-proxy-start/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://leeyo.github.io/">
+                        Skynet&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于架构、安全、项目管理、音视频直播整体解决方案</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://leeyo.github.io/">首页</a>
+                    
+                    <a  href="https://leeyo.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://leeyo.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Codis源码解析-proxy启动</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2019年7月22日
+                        </date>
+                        
+                        <div class="post-meta">
+                            <span>|</span>
+                            
+                                <span class="meta-category"><a href="https://leeyo.github.io/categories/golang">golang</a></span>
+                            
+                                <span class="meta-category"><a href="https://leeyo.github.io/categories/codis">codis</a></span>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        <div class="clear">
+                            <div class="toc-article">
+                                <div class="toc-title">文章目录</div>
+                                <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#启动codis">启动Codis</a>
+<ul>
+<li>
+<ul>
+<li><a href="#启动参数说明">启动参数说明</a></li>
+<li><a href="#独立的goroutine-根据负载自动调配gomaxprocs">独立的goroutine，根据负载自动调配GOMAXPROCS</a></li>
+<li><a href="#载入配置文件的配置项目">载入配置文件的配置项目</a></li>
+<li><a href="#proxy-启动监听">proxy 启动监听</a></li>
+<li><a href="#加入codis集群">加入codis集群</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                            </div>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<h2 id="启动codis">启动Codis</h2>
+
+<h4 id="启动参数说明">启动参数说明</h4>
+
+<pre><code class="language-shell">$ cd /opt/codis/admin
+# codis 自带了一个启动脚本
+$ ./codis-proxy-admin.sh start
+# 执行后可以看到如下进程
+$ ps aux|grep codis-proxy
+ /opt/codis/admin/../bin/codis-proxy --config=/opt/codis/admin/../config/proxy.toml --dashboard=127.0.0.1:18080 --log=/srv/log/codis/codis-proxy.log --log-level=WARN --ncpu=12 --pidfile=/srv/log/codis/codis-proxy.pid
+</code></pre>
+
+<p><code>--config=/opt/codis/config/proxy.toml  #用于指定proxy配置文件路径</code></p>
+
+<p><code>--dashboard=127.0.0.1:18080  #用于指定dashboard地址</code></p>
+
+<p><code>--log=/srv/log/codis/codis-proxy.log #用于指定日志路径</code></p>
+
+<p><code>--log-level=WARN  #用于指定日志输出等级</code></p>
+
+<p><code>--ncpu=12  #请参考如下代码，这里要特别说明一下，如果不显式指明GOMAXPROCS的话，goroutine都是运行在同一个CPU核心上，一个goroutine得到时间片的时候，其他的goroutine都在等待。</code></p>
+
+<p><code>--pidfile=/srv/log/codis/codis-proxy.pid  # 指定pid文件</code></p>
+
+<p>主程序的入口为<code>cmd/proxy/main.go</code></p>
+
+<h4 id="独立的goroutine-根据负载自动调配gomaxprocs">独立的goroutine，根据负载自动调配GOMAXPROCS</h4>
+
+<pre><code class="language-go">	var ncpu int
+	if n, ok := utils.ArgumentInteger(d, &quot;--ncpu&quot;); ok {
+		ncpu = n   //显式指明使用的cpu数量
+	} else {
+		ncpu = 4	 //默认使用cpu数量
+	}
+	//设置cpu数量
+	runtime.GOMAXPROCS(ncpu)
+	var maxncpu int
+	if n, ok := utils.ArgumentInteger(d, &quot;--max-ncpu&quot;); ok {
+		//可以通过命令行配置最大使用的cpu数量
+		maxncpu = math2.MaxInt(ncpu, n)
+	} else {
+		//如果没有手动配置，使用机器全部的cpu
+		maxncpu = math2.MaxInt(ncpu, runtime.NumCPU())
+	}
+	log.Warnf(&quot;set ncpu = %d, max-ncpu = %d&quot;, ncpu, maxncpu)
+
+	if ncpu &lt; maxncpu {
+		//这段代码比较智能，开了一个独立的goroutine，根据机器负载的情况，自动调节cpu数量
+		go AutoGOMAXPROCS(ncpu, maxncpu)
+	}
+</code></pre>
+
+<h4 id="载入配置文件的配置项目">载入配置文件的配置项目</h4>
+
+<pre><code class="language-go">	config := proxy.NewDefaultConfig()
+	if s, ok := utils.Argument(d, &quot;--config&quot;); ok {
+		if err := config.LoadFromFile(s); err != nil {
+			log.PanicErrorf(err, &quot;load config %s failed&quot;, s)
+		}
+	}
+</code></pre>
+
+<h4 id="proxy-启动监听">proxy 启动监听</h4>
+
+<pre><code class="language-shell">	s, err := proxy.New(config)
+	if err != nil {
+		log.PanicErrorf(err, &quot;create proxy with config file failed\n%s&quot;, config)
+	}
+</code></pre>
+
+<p>我们先看看proxy这个struct，位于 <code>pkg/proxy/proxy.go</code></p>
+
+<pre><code class="language-go">type Proxy struct {
+  //互斥锁
+	mu sync.Mutex
+  
+	//用于鉴权的参数
+	xauth string
+  //接口数据交互的模型
+	model *models.Proxy
+	//接收退出信息的channel
+	exit struct {
+		C chan struct{}
+	}
+  //是否在线
+	online bool
+  //是否关闭
+	closed bool
+	//配置
+	config *Config
+  //存储了sharedBackendConnPool和slots，负责转发请求到对应的backend
+	router *Router
+	ignore []byte
+	//监听用户请求的listener
+	lproxy net.Listener
+  //监听管理接口请求的listener
+	ladmin net.Listener
+
+	ha struct {
+		monitor *redis.Sentinel
+		masters map[int]string
+		servers []string
+	}
+  //java客户端Jodis与codis集群交互，就是通过下面的struct，里面存储了zkClient以及&quot;/jodis/cluster-1/proxy-token&quot;这个路径
+	jodis *Jodis
+}
+</code></pre>
+
+<p>我们详细看看 proxy.New 这个方法做了哪些事情，代码在 <code>pkg/proxy/proxy.go</code></p>
+
+<pre><code class="language-go">func New(config *Config) (*Proxy, error) {
+  //配置校验
+	if err := config.Validate(); err != nil {
+		return nil, errors.Trace(err)
+	}
+  //校验集群名称是否匹配规则
+	if err := models.ValidateProduct(config.ProductName); err != nil {
+		return nil, errors.Trace(err)
+	}
+
+	s := &amp;Proxy{}
+	s.config = config
+	s.exit.C = make(chan struct{})
+	s.router = NewRouter(config)
+	s.ignore = make([]byte, config.ProxyHeapPlaceholder.Int64())
+	// Proxy 的模型，主要用于api接口的数据交互
+	s.model = &amp;models.Proxy{
+		StartTime: time.Now().String(),
+	}
+	s.model.ProductName = config.ProductName
+	s.model.DataCenter = config.ProxyDataCenter
+	s.model.Pid = os.Getpid()
+	s.model.Pwd, _ = os.Getwd()
+	if b, err := exec.Command(&quot;uname&quot;, &quot;-a&quot;).Output(); err != nil {
+		log.WarnErrorf(err, &quot;run command uname failed&quot;)
+	} else {
+		s.model.Sys = strings.TrimSpace(string(b))
+	}
+	s.model.Hostname = utils.Hostname
+
+	if err := s.setup(config); err != nil {
+		s.Close()
+		return nil, err
+	}
+
+	log.Warnf(&quot;[%p] create new proxy:\n%s&quot;, s, s.model.Encode())
+
+	unsafe2.SetMaxOffheapBytes(config.ProxyMaxOffheapBytes.Int64())
+  //启动管理地址监听，用于和dashboard的相关交互
+	go s.serveAdmin()
+  //启动服务地址监听，用户服务用户请求
+	go s.serveProxy()
+  //统计相关的东西
+	s.startMetricsJson()
+	s.startMetricsInfluxdb()
+	s.startMetricsStatsd()
+
+	return s, nil
+}
+</code></pre>
+
+<p>我们先继续看看 s.serveAdmin 的作用，启用了一个http服务，并调用了 newApiServer *http.handler</p>
+
+<pre><code class="language-go">func (s *Proxy) serveAdmin() {
+	if s.IsClosed() {
+		return
+	}
+	defer s.Close()
+
+	log.Warnf(&quot;[%p] admin start service on %s&quot;, s, s.ladmin.Addr())
+
+	eh := make(chan error, 1)
+	go func(l net.Listener) {
+		h := http.NewServeMux()
+		h.Handle(&quot;/&quot;, newApiServer(s))
+		hs := &amp;http.Server{Handler: h}
+		eh &lt;- hs.Serve(l)
+	}(s.ladmin)
+
+	select {
+	case &lt;-s.exit.C:
+		log.Warnf(&quot;[%p] admin shutdown&quot;, s)
+	case err := &lt;-eh:
+		log.ErrorErrorf(err, &quot;[%p] admin exit on error&quot;, s)
+	}
+}
+
+func newApiServer(p *Proxy) http.Handler {
+	m := martini.New()
+	m.Use(martini.Recovery())
+	m.Use(render.Renderer())
+	m.Use(func(w http.ResponseWriter, req *http.Request, c martini.Context) {
+		path := req.URL.Path
+		if req.Method != &quot;GET&quot; &amp;&amp; strings.HasPrefix(path, &quot;/api/&quot;) {
+			var remoteAddr = req.RemoteAddr
+			var headerAddr string
+			for _, key := range []string{&quot;X-Real-IP&quot;, &quot;X-Forwarded-For&quot;} {
+				if val := req.Header.Get(key); val != &quot;&quot; {
+					headerAddr = val
+					break
+				}
+			}
+			log.Warnf(&quot;[%p] API call %s from %s [%s]&quot;, p, path, remoteAddr, headerAddr)
+		}
+		c.Next()
+	})
+	m.Use(gzip.All())
+	m.Use(func(c martini.Context, w http.ResponseWriter) {
+		w.Header().Set(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;)
+	})
+
+	api := &amp;apiServer{proxy: p}
+
+	r := martini.NewRouter()
+	r.Get(&quot;/&quot;, func(r render.Render) {
+		r.Redirect(&quot;/proxy&quot;)
+	})
+	r.Any(&quot;/debug/**&quot;, func(w http.ResponseWriter, req *http.Request) {
+		http.DefaultServeMux.ServeHTTP(w, req)
+	})
+
+	r.Group(&quot;/proxy&quot;, func(r martini.Router) {
+		r.Get(&quot;&quot;, api.Overview)
+		r.Get(&quot;/model&quot;, api.Model)
+		r.Get(&quot;/stats&quot;, api.StatsNoXAuth)
+		r.Get(&quot;/slots&quot;, api.SlotsNoXAuth)
+	})
+	r.Group(&quot;/api/proxy&quot;, func(r martini.Router) {
+		r.Get(&quot;/model&quot;, api.Model)
+		r.Get(&quot;/xping/:xauth&quot;, api.XPing)						  
+		r.Get(&quot;/stats/:xauth&quot;, api.Stats)
+		r.Get(&quot;/stats/:xauth/:flags&quot;, api.Stats)
+		r.Get(&quot;/slots/:xauth&quot;, api.Slots)
+		r.Put(&quot;/start/:xauth&quot;, api.Start)							//proxy上线到集群会用到这个接口，用于给dashboard回调，启用proxy服务
+		r.Put(&quot;/stats/reset/:xauth&quot;, api.ResetStats)
+		r.Put(&quot;/forcegc/:xauth&quot;, api.ForceGC)
+		r.Put(&quot;/shutdown/:xauth&quot;, api.Shutdown)
+		r.Put(&quot;/loglevel/:xauth/:value&quot;, api.LogLevel)
+		r.Put(&quot;/fillslots/:xauth&quot;, binding.Json([]*models.Slot{}), api.FillSlots)
+		r.Put(&quot;/sentinels/:xauth&quot;, binding.Json(models.Sentinel{}), api.SetSentinels)
+		r.Put(&quot;/sentinels/:xauth/rewatch&quot;, api.RewatchSentinels)
+	})
+
+	m.MapTo(r, (*martini.Routes)(nil))
+	m.Action(r.Handle)
+	return m
+}
+</code></pre>
+
+<p>回到 <code>cmd/proxy/main.go</code></p>
+
+<h4 id="加入codis集群">加入codis集群</h4>
+
+<pre><code class="language-go">	switch {
+	case dashboard != &quot;&quot;:
+		go AutoOnlineWithDashboard(s, dashboard)
+	case coordinator.name != &quot;&quot;:
+		go AutoOnlineWithCoordinator(s, coordinator.name, coordinator.addr, coordinator.auth)
+	case slots != nil:
+		go AutoOnlineWithFillSlots(s, slots)
+	}
+</code></pre>
+
+<p>这里支持3种加入集群的方式，分别有dashboard、coordinator、启动proxy的时候携带slots参数。这里我们详细看看dashboard的方式。使用dashboard将proxy加入集群的方式为：</p>
+
+<p><code>* 调用dashboard的api，携带proxy的地址，告诉dashboard proxy启动</code></p>
+
+<p><code>* dashboard 调用proxy_api 里面的 /api/proxy/start/:xauth 接口，调用 proxy.Start 方法，初始化路由和jodis</code></p>
+
+<pre><code class="language-go">func AutoOnlineWithDashboard(p *proxy.Proxy, dashboard string) {
+	//通过dashboard上线proxy
+	//调用dashboard api，dashboard 保存proxy相关信息，并且回调 /api/proxy/start/:xauth ，调用 proxy.Start 方法，初始化路由和jodis
+	//这个流程稍微隐晦了一点
+	for i := 0; i &lt; 10; i++ {
+		if p.IsClosed() || p.IsOnline() {
+			return
+		}
+		if OnlineProxy(p, dashboard) {
+			return
+		}
+		time.Sleep(time.Second * 3)
+	}
+	log.Panicf(&quot;online proxy failed&quot;)
+}
+
+func OnlineProxy(p *proxy.Proxy, dashboard string) bool {
+  // dashboard 提供的api 接口调用的client，代码位于  pkg/topom/topom_api.go
+	client := topom.NewApiClient(dashboard)
+	t, err := client.Model()
+	if err != nil {
+		log.WarnErrorf(err, &quot;rpc fetch model failed&quot;)
+		return false
+	}
+	//校验集群的名称，如果不一致，报错并退出
+	if t.ProductName != p.Config().ProductName {
+		log.Panicf(&quot;unexcepted product name, got model =\n%s&quot;, t.Encode())
+	}
+	client.SetXAuth(p.Config().ProductName)
+	//告诉dashboard,proxy 上线，并将管理地址传递过去
+	if err := client.OnlineProxy(p.Model().AdminAddr); err != nil {
+		log.WarnErrorf(err, &quot;rpc online proxy failed&quot;)
+		return false
+	} else {
+		log.Warnf(&quot;rpc online proxy seems OK&quot;)
+		return true
+	}
+}
+</code></pre>
+
+<p>查看dashboard的代码，位于 <code>cmd/dashboard/main.go</code> 。启动相关的参数这里就不详细解释了。</p>
+
+<pre><code class="language-go">	s, err := topom.New(client, config)
+	if err != nil {
+		log.PanicErrorf(err, &quot;create topom with config file failed\n%s&quot;, config)
+	}
+</code></pre>
+
+                        </div>
+
+                        
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/2019/07/hugo-start/">开始使用hugo</a></li>
+        
+        <li><a href="/about/">关于作者</a></li>
+        
+        <li><a href="/archives/">归档</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="https://leeyo.github.io/tags/golang">golang</a></li>
+                                
+                                <li><a href="https://leeyo.github.io/tags/codis">codis</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://leeyo.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://leeyo.github.io/2019/07/codis-analyze-proxy-start/" title="Codis源码解析-proxy启动">Codis源码解析-proxy启动</a>
+    </li>
+    
+    <li>
+        <a href="https://leeyo.github.io/2019/07/hugo-start/" title="开始使用hugo">开始使用hugo</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://leeyo.github.io/categories/codis/">codis(1)</a>
+    </li>
+    
+    <li>
+        <a href="https://leeyo.github.io/categories/golang/">golang(2)</a>
+    </li>
+    
+    <li>
+        <a href="https://leeyo.github.io/categories/hugo/">hugo(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://leeyo.github.io/tags/codis/">codis</a>
+    
+    <a href="https://leeyo.github.io/tags/golang/">golang</a>
+    
+    <a href="https://leeyo.github.io/tags/hugo/">hugo</a>
+    
+</div>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://leeyo.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2019 <a href="https://leeyo.github.io/">Skynet&#39;s Blog By Skynet</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript">
+    
+    (function(){
+        $("pre code").parent().addClass("line-numbers")
+    }())
+
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

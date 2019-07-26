@@ -7,27 +7,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>关于作者 | Skynet&#39;s Blog</title>
-    <meta property="og:title" content="关于作者 - Skynet&#39;s Blog">
+    <title>codis | Skynet&#39;s Blog</title>
+    <meta property="og:title" content="codis - Skynet&#39;s Blog">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-07-20T10:34:41&#43;08:00">
-        
-        
-    <meta property="article:modified_time" content="2019-07-20T10:34:41&#43;08:00">
         
     <meta name="Keywords" content="架构、安全、devops、高并发、php、golang、rust、nodejs、音视频、直播、项目管理、移动互联网">
-    <meta name="description" content="关于作者">
+    <meta name="description" content="codis">
         
     <meta name="author" content="Skynet">
-    <meta property="og:url" content="https://leeyo.github.io/about/">
+    <meta property="og:url" content="https://leeyo.github.io/tags/codis/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="/css/normalize.css">
     
-        <link rel="stylesheet" href="/css/prism.css">
-    
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="alternate" type="application/rss+xml+xml" href="https://leeyo.github.io/tags/codis/index.xml" title="Skynet's Blog" />
     <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 
     
@@ -36,6 +31,7 @@
     
     
 </head>
+
 
 <body>
 <header id="header" class="clearfix">
@@ -55,7 +51,7 @@
                     
                     <a  href="https://leeyo.github.io/archives/" title="归档">归档</a>
                     
-                    <a class="current" href="https://leeyo.github.io/about/" title="关于">关于</a>
+                    <a  href="https://leeyo.github.io/about/" title="关于">关于</a>
                     
                 </nav>
             </div>
@@ -70,53 +66,57 @@
 
             <div class="col-8" id="main">
                 <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">关于作者</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年7月20日
-                        </date>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            <p>资深架构师，php、nodejs资深开发，python、golang、rust、iOS、安卓爱好者，擅长音视频直播点播整体解决方案、高并发高可靠系统架构</p>
-
-                        </div>
-
-                        
-
-
-                        
-
-<div class="post-archive">
-    <h2>See Also</h2>
-    <ul class="listing">
-        
-        <li><a href="/archives/">归档</a></li>
-        
-    </ul>
-</div>
-
-
-                        <div class="post-meta meta-tags">
-                            
-                            没有标签
-                            
-                        </div>
-                    </article>
                     
-    
+                    <h3 class="archive-title">
+                        包含标签
+                        <span class="keyword">codis</span>
+                        的文章
+                    </h3>
+                    
 
-    
-    
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://leeyo.github.io/2019/07/codis-analyze-proxy-start/">Codis源码解析-proxy启动</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年7月22日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://leeyo.github.io/categories/golang">golang</a>
+                                
+                                    <a href="https://leeyo.github.io/categories/codis">codis</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                启动Codis 启动参数说明 $ cd /opt/codis/admin # codis 自带了一个启动脚本 $ ./codis-proxy-admin.sh start # 执行后可以看到如下进程 $ ps aux|grep codis-proxy /opt/codis/admin/../bin/codis-proxy --config=/opt/codis/admin/../config/proxy.toml --dashboard=127.0.0.1:18080 --log=/srv/log/codis/codis-proxy.log --log-level=WARN --ncpu=12 --pidfile=/srv/log/codis/codis-proxy.pid  --config=/opt/codis/config/proxy.toml #用于指定proxy配置文件路径
+--dashboard=127.0.0.1:18080 #用于指定dashboard地址
+--log=/srv/log/codis/codis-proxy.log #用于指定日志路径
+--log-level=WARN #用于指定日志输出等级
+--ncpu=12 #请参考如下代码，这里要特别说明一下，如果不显式指明GOMAXPROCS的话，goroutine都是运行在同一个CPU核心上，一个goroutine得到时间片的时候，其他的goroutine都在等待。
+--pidfile=/srv/log/codis/codis-proxy.pid # 指定pid文件
+主程序的入口为cmd/proxy/main.go
+独立的goroutine，根据负载自动调配GOMAXPROCS var ncpu int if n, ok := utils.ArgumentInteger(d, &quot;--ncpu&quot;); ok { ncpu = n //显式指明使用的cpu数量 } else { ncpu = 4	//默认使用cpu数量 } //设置cpu数量 runtime.GOMAXPROCS(ncpu) var maxncpu int if n, ok := utils.……
+                                <p class="readmore"><a href="https://leeyo.github.io/2019/07/codis-analyze-proxy-start/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+
+                    
+
+
+
+
+
                 </div>
             </div>
+
             <div id="secondary">
     <section class="widget">
         <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
@@ -198,28 +198,13 @@
 </footer>
 
 
-    <script type="text/javascript">
-    
-    (function(){
-        $("pre code").parent().addClass("line-numbers")
-    }())
-
-    window.MathJax = {
-        tex2jax: {
-            inlineMath: [ ['$','$'] ],
-            processEscapes: true
-        }
-    };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
 <a id="rocket" href="#top"></a>
 <script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
 
 
 
 <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
 
 
 

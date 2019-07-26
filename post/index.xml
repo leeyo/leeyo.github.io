@@ -6,10 +6,26 @@
     <description>Recent content in Posts on Skynet&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 20 Jul 2019 14:34:00 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 22 Jul 2019 16:19:37 +0800</lastBuildDate>
     
 	<atom:link href="https://leeyo.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Codis源码解析-proxy启动</title>
+      <link>https://leeyo.github.io/2019/07/codis-analyze-proxy-start/</link>
+      <pubDate>Mon, 22 Jul 2019 16:19:37 +0800</pubDate>
+      
+      <guid>https://leeyo.github.io/2019/07/codis-analyze-proxy-start/</guid>
+      <description>启动Codis 启动参数说明 $ cd /opt/codis/admin # codis 自带了一个启动脚本 $ ./codis-proxy-admin.sh start # 执行后可以看到如下进程 $ ps aux|grep codis-proxy /opt/codis/admin/../bin/codis-proxy --config=/opt/codis/admin/../config/proxy.toml --dashboard=127.0.0.1:18080 --log=/srv/log/codis/codis-proxy.log --log-level=WARN --ncpu=12 --pidfile=/srv/log/codis/codis-proxy.pid  --config=/opt/codis/config/proxy.toml #用于指定proxy配置文件路径
+--dashboard=127.0.0.1:18080 #用于指定dashboard地址
+--log=/srv/log/codis/codis-proxy.log #用于指定日志路径
+--log-level=WARN #用于指定日志输出等级
+--ncpu=12 #请参考如下代码，这里要特别说明一下，如果不显式指明GOMAXPROCS的话，goroutine都是运行在同一个CPU核心上，一个goroutine得到时间片的时候，其他的goroutine都在等待。
+--pidfile=/srv/log/codis/codis-proxy.pid # 指定pid文件
+主程序的入口为cmd/proxy/main.go
+独立的goroutine，根据负载自动调配GOMAXPROCS var ncpu int if n, ok := utils.ArgumentInteger(d, &amp;quot;--ncpu&amp;quot;); ok { ncpu = n //显式指明使用的cpu数量 } else { ncpu = 4	//默认使用cpu数量 } //设置cpu数量 runtime.GOMAXPROCS(ncpu) var maxncpu int if n, ok := utils.</description>
+    </item>
     
     <item>
       <title>开始使用hugo</title>

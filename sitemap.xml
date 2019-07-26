@@ -4,48 +4,65 @@
   
   <url>
     <loc>https://leeyo.github.io/categories/</loc>
-    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <lastmod>2019-07-22T16:19:37+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
+    <loc>https://leeyo.github.io/2019/07/codis-analyze-proxy-start/</loc>
+    <lastmod>2019-07-22T16:19:37+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://leeyo.github.io/post/</loc>
-    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <lastmod>2019-07-22T16:19:37+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://leeyo.github.io/</loc>
-    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <lastmod>2019-07-22T16:19:37+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://leeyo.github.io/tags/</loc>
-    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <lastmod>2019-07-22T16:19:37+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://leeyo.github.io/categories/golang/</loc>
-    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
+    <loc>https://leeyo.github.io/tags/codis/</loc>
+    <lastmod>2019-07-22T16:19:37+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/categories/codis/</loc>
+    <lastmod>2019-07-22T16:19:37+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://leeyo.github.io/tags/golang/</loc>
+    <lastmod>2019-07-22T16:19:37+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/categories/golang/</loc>
+    <lastmod>2019-07-22T16:19:37+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://leeyo.github.io/tags/hugo/</loc>
     <lastmod>2019-07-20T14:34:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://leeyo.github.io/categories/hugo/</loc>
-    <lastmod>2019-07-20T14:34:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://leeyo.github.io/tags/hugo/</loc>
     <lastmod>2019-07-20T14:34:00+08:00</lastmod>
     <priority>0</priority>
   </url>
